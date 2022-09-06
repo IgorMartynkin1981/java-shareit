@@ -4,15 +4,15 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-
-/**
- * TODO Sprint add-controllers.
- */
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 @Data
-@Builder(toBuilder = true)
-public class User {
+@Builder
+public class UserDto {
+    @Positive
     private Long id;
     private String name;
+    @Email
     private String email;
 }
