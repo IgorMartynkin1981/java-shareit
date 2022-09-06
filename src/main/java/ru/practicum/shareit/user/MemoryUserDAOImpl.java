@@ -4,10 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.StorageException;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
-public class MemoryUserDAOImpl implements UserDAO{
+public class MemoryUserDAOImpl implements UserDAO {
     private final Map<Long, User> users = new HashMap<>();
     private Long counter = 0L;
 

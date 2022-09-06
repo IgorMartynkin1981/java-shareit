@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user;
 
 import java.util.Collection;
-import java.util.Optional;
 
 public interface UserDAO {
     User createUser(User user);
