@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.StorageException;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +39,6 @@ public class MemoryUserDAOImpl implements UserDAO {
         if (users.containsKey(userId)) {
             users.put(userId, user);
             return user;
-
         } else {
             throw new StorageException(String.format("User with ID: %d was not found", userId), HttpStatus.NOT_FOUND);
         }
@@ -50,12 +48,5 @@ public class MemoryUserDAOImpl implements UserDAO {
     @Override
     public void delete(Long userId) {
         users.remove(userId);
-    }
-
-    private Long getId() {
-        long maxKey = users.keySet().stream()
-                .max(Comparator.comparing(users::containsKey))
-                .orElse(0L);
-        return maxKey + 1;
     }
 }
