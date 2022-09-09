@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userDto.getEmail() != null) {
-            if (emailIsValid(userDto.getEmail())) {
+            if (checkUserForValid(userDto.getEmail())) {
                 builder.email(userDto.getEmail());
             } else {
                 throw new ValidationException(
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(@Valid UserDto userDto) {
-        if (!emailIsValid(userDto.getEmail())) {
+        if (!checkUserForValid(userDto.getEmail())) {
             throw new ValidationException(
                     String.format("User with email %s already exists!", userDto.getEmail()), HttpStatus.CONFLICT);
         }
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
         userDAO.delete(userId);
     }
 
-    private boolean emailIsValid(String email) {
+    private boolean checkUserForValid(String email) {
         return userDAO.getAllUsers()
                 .stream()
                 .map(User::getEmail)

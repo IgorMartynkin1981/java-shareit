@@ -27,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(Long ownerId, ItemDto item) {
         Item result = ItemMapper.toItem(item, ownerId);
 
-        if (itemIsValid(item) && userDAO.getUserById(ownerId) == null) {
+        if (checkItemForValid(item) && userDAO.getUserById(ownerId) == null) {
             throw new StorageException("Cannot add new item for non-existent user!", HttpStatus.NOT_FOUND);
         }
 
@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private boolean itemIsValid(ItemDto item) {
+    private boolean checkItemForValid(ItemDto item) {
         if (item.getName() == null || item.getName().isEmpty()) {
             throw new ValidationException("Item name cannot be empty", HttpStatus.BAD_REQUEST);
         }
