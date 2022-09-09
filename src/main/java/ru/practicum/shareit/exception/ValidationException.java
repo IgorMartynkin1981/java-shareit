@@ -8,9 +8,6 @@ import org.springframework.validation.ObjectError;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Исключение валидации сущностей
- */
 public class ValidationException extends CommonException {
 
     private BindingResult errors;

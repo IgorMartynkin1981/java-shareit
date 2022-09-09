@@ -2,9 +2,6 @@ package ru.practicum.shareit.item;
 
 import java.util.Collection;
 
-/**
- * Интерфейс для репозитория Item-ов
- */
 public interface ItemDAO {
     Item addItem(Long ownerId, Item item);
 

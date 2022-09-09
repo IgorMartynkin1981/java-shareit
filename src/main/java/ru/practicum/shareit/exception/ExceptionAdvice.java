@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * Эдвайс для обработки исключений и их вывода в response
- */
 @Slf4j
 @ControllerAdvice
 public class ExceptionAdvice {

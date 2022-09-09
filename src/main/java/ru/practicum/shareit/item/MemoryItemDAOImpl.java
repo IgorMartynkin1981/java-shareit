@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Реализация ДАО репозитория итемов с хранением в памяти
- */
 @Component
 public class MemoryItemDAOImpl implements ItemDAO {
 
@@ -32,7 +29,9 @@ public class MemoryItemDAOImpl implements ItemDAO {
             items.put(itemId, item);
             return item;
         } else {
-            throw new StorageException(String.format("There are no any items with ID %d!", itemId), HttpStatus.NOT_FOUND);
+            throw new StorageException(
+                    String.format("There are no any items with ID %d!", itemId)
+                    , HttpStatus.NOT_FOUND);
         }
     }
 
@@ -41,7 +40,9 @@ public class MemoryItemDAOImpl implements ItemDAO {
         if (items.containsKey(itemId)) {
             return items.get(itemId);
         } else {
-            throw new StorageException(String.format("There are no any items with ID %d!", itemId), HttpStatus.NOT_FOUND);
+            throw new StorageException(
+                    String.format("There are no any items with ID %d!", itemId)
+                    , HttpStatus.NOT_FOUND);
         }
     }
 

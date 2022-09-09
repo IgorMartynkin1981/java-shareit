@@ -11,10 +11,6 @@ import ru.practicum.shareit.user.UserDAO;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-/**
- * Реализация сервиса итемов
- */
-
 @Service
 public class ItemServiceImpl implements ItemService {
 

@@ -2,9 +2,6 @@ package ru.practicum.shareit.item;
 
 import java.util.Collection;
 
-/**
- * Интерфейс для сервиса итемов
- */
 public interface ItemService {
 
     ItemDto addItem(Long ownerId, ItemDto item);

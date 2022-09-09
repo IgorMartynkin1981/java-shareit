@@ -3,16 +3,11 @@ package ru.practicum.shareit.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ValidationException;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -24,25 +19,23 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<UserDto>> getUsers() {
-        return new ResponseEntity<>(service.getUsers(), HttpStatus.OK);
+    public Collection<UserDto> getUsers() {
+        return service.getUsers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-        return new ResponseEntity<>(service.getUser(id), HttpStatus.OK);
+    public UserDto getUser(@PathVariable Long id) {
+        return service.getUser(id);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Validated @RequestBody UserDto user, BindingResult errors) throws ValidationException {
-        if (errors.hasErrors()) throw new ValidationException(errors, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(service.updateUser(id, user), HttpStatus.OK);
+    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto user) {
+        return service.updateUser(id, user);
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@Validated @RequestBody UserDto user, BindingResult errors) throws ValidationException {
-        if (errors.hasErrors()) throw new ValidationException(errors, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(service.createUser(user), HttpStatus.CREATED);
+    public UserDto addUser(@Valid @RequestBody UserDto user) {
+        return service.createUser(user);
     }
 
     @DeleteMapping("/{id}")

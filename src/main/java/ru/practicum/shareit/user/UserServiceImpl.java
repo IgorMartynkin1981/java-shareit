@@ -6,12 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.User.UserBuilder;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-/**
- * Реализация сервиса пользователей
- */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -48,7 +46,9 @@ public class UserServiceImpl implements UserService {
             if (emailIsValid(userDto.getEmail())) {
                 builder.email(userDto.getEmail());
             } else {
-                throw new ValidationException(String.format("User with email %s already exists!", user.getEmail()), HttpStatus.CONFLICT);
+                throw new ValidationException(
+                        String.format("User with email %s already exists!", user.getEmail())
+                        , HttpStatus.CONFLICT);
             }
         }
 
@@ -56,27 +56,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-
-        if (emailIsValid(user.getEmail())) {
-            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                return UserMapper.toUserDto(userDAO.createUser(user));
-
-            } else {
-                throw new ValidationException("User email cannot be empty or null", HttpStatus.BAD_REQUEST);
-            }
-
-        } else {
-            throw new ValidationException(String.format("User with email %s already exists!", user.getEmail()), HttpStatus.CONFLICT);
+    public UserDto createUser(@Valid UserDto userDto) {
+        if (!emailIsValid(userDto.getEmail())) {
+            throw new ValidationException(
+                    String.format("User with email %s already exists!", userDto.getEmail())
+                    , HttpStatus.CONFLICT);
         }
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toUserDto(userDAO.createUser(user));
     }
 
     @Override
     public void deleteUser(Long userId) {
         userDAO.delete(userId);
     }
-
 
     private boolean emailIsValid(String email) {
         return userDAO.getAllUsers()

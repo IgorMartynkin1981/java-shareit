@@ -25,7 +25,9 @@ public class MemoryUserDAOImpl implements UserDAO {
         if (users.containsKey(userId)) {
             return users.get(userId);
         } else {
-            throw new StorageException(String.format("User with ID: %d was not found", userId), HttpStatus.NOT_FOUND);
+            throw new StorageException(
+                    String.format("User with ID: %d was not found", userId)
+                    , HttpStatus.NOT_FOUND);
         }
     }
 
@@ -40,7 +42,9 @@ public class MemoryUserDAOImpl implements UserDAO {
             users.put(userId, user);
             return user;
         } else {
-            throw new StorageException(String.format("User with ID: %d was not found", userId), HttpStatus.NOT_FOUND);
+            throw new StorageException(
+                    String.format("User with ID: %d was not found", userId)
+                    , HttpStatus.NOT_FOUND);
         }
 
     }

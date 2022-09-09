@@ -2,9 +2,6 @@ package ru.practicum.shareit.user;
 
 import java.util.Collection;
 
-/**
- * Интерфейс сервиса пользователей
- */
 public interface UserService {
     Collection<UserDto> getUsers();
 
@@ -15,5 +12,4 @@ public interface UserService {
     UserDto createUser(UserDto userDto);
 
     void deleteUser(Long userId);
-
 }
