@@ -30,8 +30,7 @@ public class MemoryItemDAOImpl implements ItemDAO {
             return item;
         } else {
             throw new StorageException(
-                    String.format("There are no any items with ID %d!", itemId)
-                    , HttpStatus.NOT_FOUND);
+                    String.format("There are no any items with ID %d!", itemId), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -41,8 +40,7 @@ public class MemoryItemDAOImpl implements ItemDAO {
             return items.get(itemId);
         } else {
             throw new StorageException(
-                    String.format("There are no any items with ID %d!", itemId)
-                    , HttpStatus.NOT_FOUND);
+                    String.format("There are no any items with ID %d!", itemId), HttpStatus.NOT_FOUND);
         }
     }
 

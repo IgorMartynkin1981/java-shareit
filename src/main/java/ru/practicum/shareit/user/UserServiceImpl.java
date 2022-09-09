@@ -47,8 +47,7 @@ public class UserServiceImpl implements UserService {
                 builder.email(userDto.getEmail());
             } else {
                 throw new ValidationException(
-                        String.format("User with email %s already exists!", user.getEmail())
-                        , HttpStatus.CONFLICT);
+                        String.format("User with email %s already exists!", user.getEmail()), HttpStatus.CONFLICT);
             }
         }
 
@@ -59,8 +58,7 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(@Valid UserDto userDto) {
         if (!emailIsValid(userDto.getEmail())) {
             throw new ValidationException(
-                    String.format("User with email %s already exists!", userDto.getEmail())
-                    , HttpStatus.CONFLICT);
+                    String.format("User with email %s already exists!", userDto.getEmail()), HttpStatus.CONFLICT);
         }
         User user = UserMapper.toUser(userDto);
         return UserMapper.toUserDto(userDAO.createUser(user));
