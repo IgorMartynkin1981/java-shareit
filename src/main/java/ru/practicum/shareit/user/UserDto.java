@@ -6,10 +6,12 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
-@Builder(toBuilder = true)
-public class User {
+@Builder
+public class UserDto {
+    @Positive
     private Long id;
     private String name;
     @NotNull
