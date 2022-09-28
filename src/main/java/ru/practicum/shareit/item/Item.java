@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.user.User;
 
@@ -8,7 +7,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Data
-//@Builder
 @Entity
 @Table(name = "items")
 public class Item {
@@ -29,13 +27,13 @@ public class Item {
     @JoinColumn(name = "item_id")
     private List<Comment> comments;
 
-    public Item(Long id, User owner, String name, String description, Boolean available) {
-        this.id = id;
-        this.owner = owner;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-    }
+//    public Item(Long id, User owner, String name, String description, Boolean available) {
+//        this.id = id;
+//        this.owner = owner;
+//        this.name = name;
+//        this.description = description;
+//        this.available = available;
+//    }
 
     public Item(User owner, String name, String description, Boolean available) {
         this.owner = owner;

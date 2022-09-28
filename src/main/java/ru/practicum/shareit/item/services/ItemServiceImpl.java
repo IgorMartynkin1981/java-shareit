@@ -17,6 +17,7 @@ import ru.practicum.shareit.user.repositories.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +72,7 @@ public class ItemServiceImpl implements ItemService {
         userValidation(ownerId);
         return itemRepository.findByOwnerId(ownerId).stream()
                 .map(mapper::toInfoItemDto)
+                .sorted(Comparator.comparing(InfoItemDto::getId))
                 .collect(Collectors.toList());
     }
 
