@@ -27,14 +27,6 @@ public class Item {
     @JoinColumn(name = "item_id")
     private List<Comment> comments;
 
-//    public Item(Long id, User owner, String name, String description, Boolean available) {
-//        this.id = id;
-//        this.owner = owner;
-//        this.name = name;
-//        this.description = description;
-//        this.available = available;
-//    }
-
     public Item(User owner, String name, String description, Boolean available) {
         this.owner = owner;
         this.name = name;
