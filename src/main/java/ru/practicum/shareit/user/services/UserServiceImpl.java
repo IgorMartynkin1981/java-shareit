@@ -18,8 +18,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository UserRepository) {
-        this.userRepository = UserRepository;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
