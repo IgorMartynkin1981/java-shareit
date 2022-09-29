@@ -20,10 +20,14 @@ public class CommentMapper {
     }
 
     public Comment toComment(Long itemId, Long userId, CommentDto commentDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
-                String.format("User with id %d was not found in the database", userId)));
+        User user = findUserInRepository(userId);
 
         return new Comment(commentDto.getText(), itemId, user, LocalDateTime.now());
+    }
+
+    private User findUserInRepository(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
+                String.format("User with id %d was not found in the database", userId)));
     }
 
     public static InfoCommentDto toInfoCommentDto(Comment comment) {

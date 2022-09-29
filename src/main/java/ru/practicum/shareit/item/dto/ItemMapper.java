@@ -66,9 +66,13 @@ public class ItemMapper {
     }
 
     public Item toItem(ItemDto itemDto, Long ownerId) {
-        User user = userRepository.findById(ownerId).orElseThrow(() -> new DataNotFound(
-                String.format("User with id %d was not found in the database", ownerId)));
+        User user = findUserInRepository(ownerId);
         return new Item(user, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable());
+    }
+
+    private User findUserInRepository(Long ownerId) {
+        return userRepository.findById(ownerId).orElseThrow(() -> new DataNotFound(
+                String.format("User with id %d was not found in the database", ownerId)));
     }
 
     private Booking findLastBooking(Collection<Booking> bookingList) {

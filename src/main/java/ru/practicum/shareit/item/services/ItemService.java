@@ -11,7 +11,7 @@ public interface ItemService {
 
     InfoItemDto createItem(ItemDto itemDto, Long ownerId);
 
-    InfoItemDto updateItem(ItemDto itemDto, Long ownerId);
+    InfoItemDto updateItem(Long itemId, ItemDto itemDto, Long ownerId);
 
     InfoItemDto findItemById(Long itemId, Long userId);
 

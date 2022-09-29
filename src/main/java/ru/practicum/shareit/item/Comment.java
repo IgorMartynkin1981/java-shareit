@@ -13,16 +13,16 @@ public class Comment {
     @Id
     @Column(name = "comment_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(name = "comment_text", nullable = false)
-    String text;
+    private String text;
     @Column(name = "item_id", nullable = false)
-    Long itemId;
+    private Long itemId;
     @ManyToOne
     @JoinColumn(name = "author_id")
-    User author;
+    private User author;
     @Column(name = "created", nullable = false)
-    LocalDateTime created;
+    private LocalDateTime created;
 
     public Comment(String text, Long itemId, User author, LocalDateTime created) {
         this.text = text;

@@ -32,18 +32,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserById(Long userId) {
-        return UserMapper.toUserDto(userRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFound(
-                        String.format("User with id %d was not found in the database", userId))));
+        return UserMapper.toUserDto(findAndValidationUserInRepositiry(userId));
     }
 
     @Override
     public UserDto updateUser(Long userId, UserDto userDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
-                String.format("User with id %d was not found in the database", userId)));
+        User user = findAndValidationUserInRepositiry(userId);
 
         return UserMapper.toUserDto(userRepository.save(updateUserFromData(
                 UserMapper.toUser(userId, userDto), user)));
+    }
+
+    private User findAndValidationUserInRepositiry(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
+                String.format("User with id %d was not found in the database", userId)));
     }
 
     @Override

@@ -22,11 +22,19 @@ public class BookingMapper {
     }
 
     public Booking toBooking(BookingDto bookingDto, Long bookerId) {
-        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new DataNotFound(
-                String.format("Item with id %d was not found in the database", bookingDto.getItemId())));
-        User booker = userRepository.findById(bookerId).orElseThrow(() -> new DataNotFound(
-                String.format("User with id %d was not found in the database", bookerId)));
+        Item item = findItenInRepository(bookingDto);
+        User booker = findUserInRepository(bookerId);
         return new Booking(booker, item, bookingDto.getStart(), bookingDto.getEnd());
+    }
+
+    private User findUserInRepository(Long bookerId) {
+        return userRepository.findById(bookerId).orElseThrow(() -> new DataNotFound(
+                String.format("User with id %d was not found in the database", bookerId)));
+    }
+
+    private Item findItenInRepository(BookingDto bookingDto) {
+        return itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new DataNotFound(
+                String.format("Item with id %d was not found in the database", bookingDto.getItemId())));
     }
 
     public static InfoBookingDto toInfoBookingDto(Booking booking) {

@@ -16,6 +16,7 @@ import ru.practicum.shareit.item.repositories.ItemRepository;
 import ru.practicum.shareit.user.repositories.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -43,22 +44,27 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public InfoItemDto createItem(ItemDto itemDto, Long ownerId) {
-        userValidation(ownerId);
+        findAndValidationUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(mapper.toItem(itemDto, ownerId)));
     }
 
-    public InfoItemDto updateItem(ItemDto itemDto, Long ownerId) {
-        if (ownerId == null) {
-            throw new NullDataException("Item owner id missing in request");
-        }
-        Item item = itemValidation(itemDto.getId());
-        userValidation(ownerId);
+    public InfoItemDto updateItem(Long itemId, ItemDto itemDto, Long ownerId) {
+        itemDto.setId(itemId);
+        validationOnNullDataException(ownerId);
+        Item item = findAndValidationItemInRepository(itemDto.getId());
+        findAndValidationUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(updateItemFromRepository(itemDto, ownerId, item)));
     }
 
+    private static void validationOnNullDataException(Long ownerId) {
+        if (ownerId == null) {
+            throw new NullDataException("Item owner id missing in request");
+        }
+    }
+
     public InfoItemDto findItemById(Long itemId, Long userId) {
-        userValidation(userId);
-        Item item = itemValidation(itemId);
+        findAndValidationUser(userId);
+        Item item = findAndValidationItemInRepository(itemId);
         InfoItemDto infoItemDto;
         if (item.getOwner().getId().equals((userId))) {
             infoItemDto = mapper.toInfoItemDto(item);
@@ -69,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<InfoItemDto> findAllItemsByOwnerId(Long ownerId) {
-        userValidation(ownerId);
+        findAndValidationUser(ownerId);
         return itemRepository.findByOwnerId(ownerId).stream()
                 .map(mapper::toInfoItemDto)
                 .sorted(Comparator.comparing(InfoItemDto::getId))
@@ -77,6 +83,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<InfoItemDto> searchItemsByText(String text) {
+        if (text.equals("")) {
+            return new ArrayList<>();
+        }
         return itemRepository.findByNameContainsOrDescriptionContainsIgnoreCase(text, text)
                 .stream().filter(Item::getAvailable)
                 .map(mapper::toInfoItemDto)
@@ -84,8 +93,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public InfoCommentDto createComment(Long itemId, Long userId, CommentDto commentDto) {
-        itemValidation(itemId);
-        userValidation(userId);
+        findAndValidationItemInRepository(itemId);
+        findAndValidationUser(userId);
         if (commentDto.getText() == null || commentDto.getText().equals("")) {
             throw new ErrorArgumentException("Comment cannot be empty");
         }
@@ -115,12 +124,12 @@ public class ItemServiceImpl implements ItemService {
         return item;
     }
 
-    private Item itemValidation(Long itemId) {
+    private Item findAndValidationItemInRepository(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new DataNotFound(
                 String.format("Items with id %d were not found in the database", itemId)));
     }
 
-    private void userValidation(Long userId) {
+    private void findAndValidationUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
                 String.format("User with id %d was not found in the database", userId)));
     }
