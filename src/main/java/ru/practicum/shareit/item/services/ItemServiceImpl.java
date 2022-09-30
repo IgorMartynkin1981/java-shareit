@@ -44,27 +44,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public InfoItemDto createItem(ItemDto itemDto, Long ownerId) {
-        findAndValidationUser(ownerId);
+        findAndVerifyUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(mapper.toItem(itemDto, ownerId)));
     }
 
     public InfoItemDto updateItem(Long itemId, ItemDto itemDto, Long ownerId) {
         itemDto.setId(itemId);
-        validationOnNullDataException(ownerId);
-        Item item = findAndValidationItemInRepository(itemDto.getId());
-        findAndValidationUser(ownerId);
+        verifyOnNullDataException(ownerId);
+        Item item = findAndVerifyItemInRepository(itemDto.getId());
+        findAndVerifyUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(updateItemFromRepository(itemDto, ownerId, item)));
     }
 
-    private static void validationOnNullDataException(Long ownerId) {
-        if (ownerId == null) {
-            throw new NullDataException("Item owner id missing in request");
-        }
-    }
-
     public InfoItemDto findItemById(Long itemId, Long userId) {
-        findAndValidationUser(userId);
-        Item item = findAndValidationItemInRepository(itemId);
+        findAndVerifyUser(userId);
+        Item item = findAndVerifyItemInRepository(itemId);
         InfoItemDto infoItemDto;
         if (item.getOwner().getId().equals((userId))) {
             infoItemDto = mapper.toInfoItemDto(item);
@@ -75,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<InfoItemDto> findAllItemsByOwnerId(Long ownerId) {
-        findAndValidationUser(ownerId);
+        findAndVerifyUser(ownerId);
         return itemRepository.findByOwnerId(ownerId).stream()
                 .map(mapper::toInfoItemDto)
                 .sorted(Comparator.comparing(InfoItemDto::getId))
@@ -83,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<InfoItemDto> searchItemsByText(String text) {
-        if (text.equals("")) {
+        if (!"".equals(text)) {
             return new ArrayList<>();
         }
         return itemRepository.findByNameContainsOrDescriptionContainsIgnoreCase(text, text)
@@ -93,17 +87,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public InfoCommentDto createComment(Long itemId, Long userId, CommentDto commentDto) {
-        findAndValidationItemInRepository(itemId);
-        findAndValidationUser(userId);
-        if (commentDto.getText() == null || commentDto.getText().equals("")) {
-            throw new ErrorArgumentException("Comment cannot be empty");
-        }
+        findAndVerifyItemInRepository(itemId);
+        findAndVerifyUser(userId);
+        verifyCommentIsEmpty(commentDto);
         Collection<Booking> bookingList = bookingRepository.findAllBookingsByBookerIdAndItemId(itemId, userId);
         bookingList.removeIf((b) -> b.getState().equals(State.REJECTED));
         bookingList.removeIf((b) -> b.getEnd().isAfter(LocalDateTime.now()));
-        if (bookingList.size() == 0) {
-            throw new ErrorArgumentException("Only the user who rented it can leave a comment on an item");
-        }
+        verifyUserWhoRented(bookingList);
         return CommentMapper.toInfoCommentDto(commentRepository
                 .save(commentMapper.toComment(itemId, userId, commentDto)));
     }
@@ -124,12 +114,30 @@ public class ItemServiceImpl implements ItemService {
         return item;
     }
 
-    private Item findAndValidationItemInRepository(Long itemId) {
+    private static void verifyOnNullDataException(Long ownerId) {
+        if (ownerId == null) {
+            throw new NullDataException("Item owner id missing in request");
+        }
+    }
+
+    private static void verifyCommentIsEmpty(CommentDto commentDto) {
+        if (commentDto.getText() == null || commentDto.getText().equals("")) {
+            throw new ErrorArgumentException("Comment cannot be empty");
+        }
+    }
+
+    private static void verifyUserWhoRented(Collection<Booking> bookingList) {
+        if (bookingList.size() == 0) {
+            throw new ErrorArgumentException("Only the user who rented it can leave a comment on an item");
+        }
+    }
+
+    private Item findAndVerifyItemInRepository(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new DataNotFound(
                 String.format("Items with id %d were not found in the database", itemId)));
     }
 
-    private void findAndValidationUser(Long userId) {
+    private void findAndVerifyUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
                 String.format("User with id %d was not found in the database", userId)));
     }

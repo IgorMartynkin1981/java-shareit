@@ -37,16 +37,16 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public InfoBookingDto createBooking(BookingDto bookingDto, Long bookerId) {
-        validationBooking(bookingDto, bookerId);
+        verifyBooking(bookingDto, bookerId);
         Booking booking = mapper.toBooking(bookingDto, bookerId);
         booking.setState(State.WAITING);
         return BookingMapper.toInfoBookingDto(bookingRepository.save(booking));
     }
 
     public InfoBookingDto approveBooking(Long bookingId, Boolean approved, Long ownerId) {
-        Booking booking = findAndValidationBookingInRepository(bookingId);
-        validationApprovedBooking(booking);
-        validationOwnerIter(ownerId, booking);
+        Booking booking = findAndVerifyBookingInRepository(bookingId);
+        verifyApprovedBooking(booking);
+        verifyOwnerItem(ownerId, booking);
         if (approved) {
             booking.setState(State.APPROVED);
         } else {
@@ -56,22 +56,22 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public InfoBookingDto findBookingById(Long bookingId, Long userId) {
-        validationUser(userId);
-        Booking booking = findAndValidationBookingInRepository(bookingId);
-        validationRequestOnQwnerItemOrUserCreated(userId, booking);
+        verifyUser(userId);
+        Booking booking = findAndVerifyBookingInRepository(bookingId);
+        verifyRequestOnOwnerItemOrUserCreated(userId, booking);
         return BookingMapper.toInfoBookingDto(booking);
     }
 
     public Collection<InfoBookingDto> findAllBookingsByUserId(Long userId, String state) {
-        validationUser(userId);
-        validationArgumentState(state);
+        verifyUser(userId);
+        verifyArgumentState(state);
         return setBookingStatus(bookingRepository.findAllBookingsByBooker(userId), state).stream()
                 .map(BookingMapper::toInfoBookingDto).collect(Collectors.toList());
     }
 
     public Collection<InfoBookingDto> findAllBookingsByOwnerId(Long userId, String state) {
-        validationUser(userId);
-        validationArgumentState(state);
+        verifyUser(userId);
+        verifyArgumentState(state);
         return setBookingStatus(bookingRepository.findAllBookingsByOwnerId(userId), state).stream()
                 .map(BookingMapper::toInfoBookingDto).collect(Collectors.toList());
     }
@@ -96,31 +96,31 @@ public class BookingServiceImpl implements BookingService {
         return bookings;
     }
 
-    private Booking findAndValidationBookingInRepository(Long bookingId) {
+    private Booking findAndVerifyBookingInRepository(Long bookingId) {
         return bookingRepository.findById(bookingId).orElseThrow(() -> new DataNotFound(
                 String.format("Booking with id %d was not found in the database", bookingId)));
     }
 
-    private static void validationOwnerIter(Long ownerId, Booking booking) {
+    private static void verifyOwnerItem(Long ownerId, Booking booking) {
         if (!ownerId.equals(booking.getItem().getOwner().getId())) {
             throw new ValidationDataException("Only the owner of the item can confirm the request");
         }
     }
 
-    private static void validationApprovedBooking(Booking booking) {
+    private static void verifyApprovedBooking(Booking booking) {
         if (booking.getState().equals(State.APPROVED)) {
             throw new ErrorArgumentException("It is not possible to change the status of a confirmed booking");
         }
     }
 
-    private static void validationRequestOnQwnerItemOrUserCreated(Long userId, Booking booking) {
+    private static void verifyRequestOnOwnerItemOrUserCreated(Long userId, Booking booking) {
         if (!userId.equals(booking.getItem().getOwner().getId()) && !userId.equals(booking.getBooker().getId())) {
             throw new ValidationDataException("Booking data can only be requested by the owner of the item, " +
                     "or by the user who created the booking");
         }
     }
 
-    private static void validationArgumentState(String state) {
+    private static void verifyArgumentState(String state) {
         try {
             State.valueOf(state.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -128,33 +128,33 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void validationBooking(BookingDto bookingDto, Long bookerId) {
-        Item item = findAndValidationItemInRepository(bookingDto);
-        validationAvailableItem(item);
+    private void verifyBooking(BookingDto bookingDto, Long bookerId) {
+        Item item = findAndVerifyItemInRepository(bookingDto);
+        verifyAvailableItem(item);
         LocalDateTime timeNow = LocalDateTime.now();
-        validationCorrectBookingDates(bookingDto, timeNow);
-        validationUser(bookerId);
-        validationOwnerItem(bookerId, item);
+        verifyCorrectBookingDates(bookingDto, timeNow);
+        verifyUser(bookerId);
+        verifyOwnerItem(bookerId, item);
     }
 
-    private static void validationOwnerItem(Long bookerId, Item item) {
+    private static void verifyOwnerItem(Long bookerId, Item item) {
         if (item.getOwner().getId().equals(bookerId)) {
             throw new ValidationDataException("The owner cannot booking his thing");
         }
     }
 
-    private Item findAndValidationItemInRepository(BookingDto bookingDto) {
+    private Item findAndVerifyItemInRepository(BookingDto bookingDto) {
         return itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new DataNotFound(
                 String.format("The requested item with id %d was not found in the database", bookingDto.getItemId())));
     }
 
-    private static void validationAvailableItem(Item item) {
+    private static void verifyAvailableItem(Item item) {
         if (!item.getAvailable()) {
             throw new ErrorArgumentException("Booking of this item is not possible, item status is 'occupied'");
         }
     }
 
-    private static void validationCorrectBookingDates(BookingDto bookingDto, LocalDateTime timeNow) {
+    private static void verifyCorrectBookingDates(BookingDto bookingDto, LocalDateTime timeNow) {
         if (bookingDto.getStart().isBefore(timeNow)
                 || bookingDto.getEnd().isBefore(timeNow)
                 || bookingDto.getEnd().isBefore(bookingDto.getStart())) {
@@ -162,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void validationUser(Long userId) {
+    private void verifyUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
                 String.format("User with id %d was not found in the database", userId)));
     }
