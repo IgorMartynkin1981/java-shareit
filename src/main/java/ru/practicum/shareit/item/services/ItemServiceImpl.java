@@ -77,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<InfoItemDto> searchItemsByText(String text) {
-        if (!"".equals(text)) {
+        if ("".equals(text)) {
             return new ArrayList<>();
         }
         return itemRepository.findByNameContainsOrDescriptionContainsIgnoreCase(text, text)
