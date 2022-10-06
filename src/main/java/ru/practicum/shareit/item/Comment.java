@@ -33,4 +33,12 @@ public class Comment {
 
     public Comment() {
     }
+
+    public Comment(Long id, String text, Long itemId, User author, LocalDateTime created) {
+        this.id = id;
+        this.text = text;
+        this.itemId = itemId;
+        this.author = author;
+        this.created = created;
+    }
 }

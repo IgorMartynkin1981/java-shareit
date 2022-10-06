@@ -57,7 +57,6 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>2.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -175,7 +174,7 @@
                                             <limit>
                                                 <counter>LINE</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.9</minimum>
+                                                <minimum>0.7</minimum>
                                             </limit>
                                             <limit>
                                                 <counter>BRANCH</counter>
@@ -190,12 +189,12 @@
                                             <limit>
                                                 <counter>METHOD</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.7</minimum>
+                                                <minimum>0.6</minimum>
                                             </limit>
                                             <limit>
                                                 <counter>CLASS</counter>
                                                 <value>MISSEDCOUNT</value>
-                                                <maximum>1</maximum>
+                                                <maximum>8</maximum>
                                             </limit>
                                         </limits>
                                     </rule>

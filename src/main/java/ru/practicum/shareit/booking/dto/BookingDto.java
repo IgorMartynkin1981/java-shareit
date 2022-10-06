@@ -24,4 +24,12 @@ public class BookingDto {
     @NotNull(groups = {Create.class})
     private LocalDateTime end;
     private State state;
+
+    public BookingDto(Long id, Long bookerId, Long itemId, LocalDateTime start, LocalDateTime end) {
+        this.id = id;
+        this.bookerId = bookerId;
+        this.itemId = itemId;
+        this.start = start;
+        this.end = end;
+    }
 }

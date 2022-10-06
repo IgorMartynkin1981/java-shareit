@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -13,6 +15,7 @@ import ru.practicum.shareit.exception.ErrorArgumentException;
 import ru.practicum.shareit.exception.ValidationDataException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.repositories.ItemRepository;
+import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repositories.UserRepository;
 
 import java.time.LocalDateTime;
@@ -37,8 +40,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public InfoBookingDto createBooking(BookingDto bookingDto, Long bookerId) {
-        verifyBooking(bookingDto, bookerId);
-        Booking booking = mapper.toBooking(bookingDto, bookerId);
+        Item item = findAndVerifyBooking(bookingDto, bookerId);
+        User booker = findAndVerifyUser(bookerId);
+        Booking booking = mapper.toBooking(bookingDto, item, booker);
         booking.setState(State.WAITING);
         return BookingMapper.toInfoBookingDto(bookingRepository.save(booking));
     }
@@ -56,24 +60,30 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public InfoBookingDto findBookingById(Long bookingId, Long userId) {
-        verifyUser(userId);
+        findAndVerifyUser(userId);
         Booking booking = findAndVerifyBookingInRepository(bookingId);
         verifyRequestOnOwnerItemOrUserCreated(userId, booking);
         return BookingMapper.toInfoBookingDto(booking);
     }
 
-    public Collection<InfoBookingDto> findAllBookingsByUserId(Long userId, String state) {
-        verifyUser(userId);
-        verifyArgumentState(state);
-        return setBookingStatus(bookingRepository.findAllBookingsByBooker(userId), state).stream()
+    public Collection<InfoBookingDto> findAllBookingsByUserId(Long userId, String state, Integer from, Integer size) {
+        PageRequest pageRequest = createAndVerifyArgumentsForSetBookingsStatus(userId, state, from, size);
+        return setBookingStatus(bookingRepository.findBookingsByBookerId(userId, pageRequest), state).stream()
                 .map(BookingMapper::toInfoBookingDto).collect(Collectors.toList());
     }
 
-    public Collection<InfoBookingDto> findAllBookingsByOwnerId(Long userId, String state) {
-        verifyUser(userId);
-        verifyArgumentState(state);
-        return setBookingStatus(bookingRepository.findAllBookingsByOwnerId(userId), state).stream()
+    public Collection<InfoBookingDto> findAllBookingsByOwnerId(Long userId, String state, Integer from, Integer size) {
+        PageRequest pageRequest = createAndVerifyArgumentsForSetBookingsStatus(userId, state, from, size);
+        return setBookingStatus(bookingRepository.findBookingsByItemOwnerId(userId, pageRequest), state).stream()
                 .map(BookingMapper::toInfoBookingDto).collect(Collectors.toList());
+    }
+
+    private PageRequest createAndVerifyArgumentsForSetBookingsStatus(Long userId, String state, Integer from, Integer size) {
+        int page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("start").descending());
+        findAndVerifyUser(userId);
+        verifyArgumentState(state);
+        return pageRequest;
     }
 
     private Collection<Booking> setBookingStatus(Collection<Booking> bookings, String state) {
@@ -128,13 +138,14 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void verifyBooking(BookingDto bookingDto, Long bookerId) {
+    private Item findAndVerifyBooking(BookingDto bookingDto, Long bookerId) {
         Item item = findAndVerifyItemInRepository(bookingDto);
         verifyAvailableItem(item);
         LocalDateTime timeNow = LocalDateTime.now();
         verifyCorrectBookingDates(bookingDto, timeNow);
-        verifyUser(bookerId);
+        findAndVerifyUser(bookerId);
         verifyOwnerItem(bookerId, item);
+        return item;
     }
 
     private static void verifyOwnerItem(Long bookerId, Item item) {
@@ -162,8 +173,8 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void verifyUser(Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
+    private User findAndVerifyUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
                 String.format("User with id %d was not found in the database", userId)));
     }
 }

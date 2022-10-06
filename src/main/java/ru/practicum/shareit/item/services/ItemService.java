@@ -15,9 +15,9 @@ public interface ItemService {
 
     InfoItemDto findItemById(Long itemId, Long userId);
 
-    Collection<InfoItemDto> findAllItemsByOwnerId(Long ownerId);
+    Collection<InfoItemDto> findAllItemsByOwnerId(Long ownerId, Integer from, Integer size);
 
-    Collection<InfoItemDto> searchItemsByText(String text);
+    Collection<InfoItemDto> searchItemsByText(String text, Integer from, Integer size);
 
     InfoCommentDto createComment(Long itemId, Long userId, CommentDto commentDto);
 }

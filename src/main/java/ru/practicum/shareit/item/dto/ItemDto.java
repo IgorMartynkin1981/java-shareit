@@ -10,14 +10,16 @@ import javax.validation.constraints.Positive;
 @Data
 public class ItemDto {
 
-    @Positive (groups = {Create.class})
+    @Positive(groups = {Create.class})
     private Long id;
     @NotBlank(groups = {Create.class})
     private String name;
-    @NotBlank (groups = {Create.class})
+    @NotBlank(groups = {Create.class})
     private String description;
     @NotNull(groups = {Create.class})
     private Boolean available;
+    @Positive
+    private Long requestId;
 
     public ItemDto(Long id, String name, String description, Boolean available) {
         this.id = id;

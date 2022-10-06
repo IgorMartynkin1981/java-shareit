@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.services.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @RestController
@@ -41,13 +43,21 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<InfoItemDto> findAllItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        return itemService.findAllItemsByOwnerId(ownerId);
+    public Collection<InfoItemDto> findAllItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                                         @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                         Integer from,
+                                                         @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                         Integer size) {
+        return itemService.findAllItemsByOwnerId(ownerId, from, size);
     }
 
     @GetMapping("/search")
-    public Collection<InfoItemDto> searchItemsByText(@RequestParam String text) {
-        return itemService.searchItemsByText(text);
+    public Collection<InfoItemDto> searchItemsByText(@RequestParam String text,
+                                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                     Integer from,
+                                                     @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                     Integer size) {
+        return itemService.searchItemsByText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

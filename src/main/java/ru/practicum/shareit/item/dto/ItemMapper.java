@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.repositories.BookingRepository;
 import ru.practicum.shareit.exception.DataNotFound;
-import ru.practicum.shareit.item.Comment;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repositories.UserRepository;
@@ -29,15 +28,7 @@ public class ItemMapper {
     }
 
     public InfoItemDto toInfoItemDto(Item item) {
-        findAllComments(item);
-        Collection<InfoCommentDto> commentsList = item.getComments().stream().map(CommentMapper::toInfoCommentDto)
-                .collect(Collectors.toList());
-        InfoItemDto infoItemDto = new InfoItemDto(item.getId(),
-                item.getOwner(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                commentsList);
+        InfoItemDto infoItemDto = getInfoItemDto(item);
         Collection<Booking> bookingList = bookingRepository.findByItemId(infoItemDto.getId());
         infoItemDto.setLastBooking(InfoItemDto.toBookingDto(findLastBooking(bookingList)));
         infoItemDto.setNextBooking(InfoItemDto.toBookingDto(findNextBooking(bookingList)));
@@ -45,6 +36,13 @@ public class ItemMapper {
     }
 
     public InfoItemDto toInfoItemDtoNotOwner(Item item) {
+        InfoItemDto infoItemDto = getInfoItemDto(item);
+        infoItemDto.setLastBooking(null);
+        infoItemDto.setNextBooking(null);
+        return infoItemDto;
+    }
+
+    private static InfoItemDto getInfoItemDto(Item item) {
         findAllComments(item);
         Collection<InfoCommentDto> commentsList = item.getComments().stream().map(CommentMapper::toInfoCommentDto)
                 .collect(Collectors.toList());
@@ -54,23 +52,25 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 commentsList);
-        infoItemDto.setLastBooking(null);
-        infoItemDto.setNextBooking(null);
+        if (item.getRequestId() != null) {
+            infoItemDto.setRequestId(item.getRequestId());
+        }
         return infoItemDto;
     }
 
     private static void findAllComments(Item item) {
         if (item.getComments() == null) {
-            item.setComments(new ArrayList<Comment>());
+            item.setComments(new ArrayList<>());
         }
     }
 
     public Item toItem(ItemDto itemDto, Long ownerId) {
-        User user = findUserInRepository(ownerId);
-        return new Item(user, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable());
+        User user = findAndVerifyUserInRepository(ownerId);
+        return new Item(user, itemDto.getName(), itemDto.getDescription()
+                , itemDto.getAvailable(), itemDto.getRequestId());
     }
 
-    private User findUserInRepository(Long ownerId) {
+    private User findAndVerifyUserInRepository(Long ownerId) {
         return userRepository.findById(ownerId).orElseThrow(() -> new DataNotFound(
                 String.format("User with id %d was not found in the database", ownerId)));
     }

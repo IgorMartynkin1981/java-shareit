@@ -9,7 +9,7 @@ import java.util.Collection;
 
 @Data
 public class InfoItemDto {
-    Long id;
+    private Long id;
     private User owner;
     private String name;
     private String description;
@@ -17,6 +17,7 @@ public class InfoItemDto {
     private BookingDto lastBooking;
     private BookingDto nextBooking;
     private Collection<InfoCommentDto> comments;
+    private Long requestId;
 
     public InfoItemDto(Long id, User owner, String name, String description,
                        Boolean available, Collection<InfoCommentDto> comments) {
@@ -40,6 +41,9 @@ public class InfoItemDto {
             this.bookerId = bookerId;
             this.start = start;
             this.end = end;
+        }
+
+        public BookingDto() {
         }
     }
 
