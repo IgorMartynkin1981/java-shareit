@@ -60,7 +60,7 @@ public class RequestServiceImpl implements RequestService {
 
     private ItemRequest findAndVerifyItemRequest(Long requestId) {
         return requestRepository.findById(requestId)
-                .orElseThrow(() -> new DataNotFound(String.format("Request with id %d was not found in the database"
-                        , requestId)));
+                .orElseThrow(() -> new DataNotFound(
+                        String.format("Request with id %d was not found in the database", requestId)));
     }
 }

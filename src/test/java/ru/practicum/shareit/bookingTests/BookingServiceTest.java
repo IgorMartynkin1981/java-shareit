@@ -206,8 +206,8 @@ class BookingServiceTest {
         Assertions.assertEquals(bookingService.findAllBookingsByUserId(1L, "REJECTED", 0, 10),
                 new ArrayList<>(List.of(ObjectsForTests.rejectedInfoBookingDTO())));
         Assertions.assertEquals(bookingService.findAllBookingsByUserId(1L, "FUTURE", 0, 10),
-                new ArrayList<>(Arrays.asList(ObjectsForTests.waitingInfoBookingDTO()
-                        , ObjectsForTests.futureInfoBookingDTO())));
+                new ArrayList<>(Arrays.asList(ObjectsForTests.waitingInfoBookingDTO(),
+                        ObjectsForTests.futureInfoBookingDTO())));
         Assertions.assertEquals(bookingService.findAllBookingsByUserId(1L, "CURRENT", 0, 10),
                 new ArrayList<>(List.of(ObjectsForTests.currentInfoBookingDTO())));
     }
@@ -233,8 +233,8 @@ class BookingServiceTest {
         Assertions.assertEquals(bookingService.findAllBookingsByOwnerId(1L, "REJECTED", 0, 10),
                 new ArrayList<>(List.of(ObjectsForTests.rejectedInfoBookingDTO())));
         Assertions.assertEquals(bookingService.findAllBookingsByOwnerId(1L, "FUTURE", 0, 10),
-                new ArrayList<>(Arrays.asList(ObjectsForTests.waitingInfoBookingDTO()
-                        , ObjectsForTests.futureInfoBookingDTO())));
+                new ArrayList<>(Arrays.asList(ObjectsForTests.waitingInfoBookingDTO(),
+                        ObjectsForTests.futureInfoBookingDTO())));
         Assertions.assertEquals(bookingService.findAllBookingsByOwnerId(1L, "CURRENT", 0, 10),
                 new ArrayList<>(List.of(ObjectsForTests.currentInfoBookingDTO())));
     }
