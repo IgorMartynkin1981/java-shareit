@@ -66,8 +66,8 @@ public class ItemMapper {
 
     public Item toItem(ItemDto itemDto, Long ownerId) {
         User user = findAndVerifyUserInRepository(ownerId);
-        return new Item(user, itemDto.getName(), itemDto.getDescription()
-                , itemDto.getAvailable(), itemDto.getRequestId());
+        return new Item(user, itemDto.getName(), itemDto.getDescription(),
+                itemDto.getAvailable(), itemDto.getRequestId());
     }
 
     private User findAndVerifyUserInRepository(Long ownerId) {
