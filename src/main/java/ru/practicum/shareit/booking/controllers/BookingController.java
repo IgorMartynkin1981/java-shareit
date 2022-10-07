@@ -45,21 +45,20 @@ public class BookingController {
     @GetMapping
     public Collection<InfoBookingDto> findAllBookingsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                               @RequestParam(defaultValue = "ALL") String state,
-                                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
-                                                              Integer from,
-                                                              @Positive @RequestParam(name = "size", defaultValue = "10")
-                                                              Integer size) {
+                                                              @PositiveOrZero @RequestParam(name = "from",
+                                                                      defaultValue = "0") Integer from,
+                                                              @Positive @RequestParam(name = "size",
+                                                                      defaultValue = "10") Integer size) {
         return bookingService.findAllBookingsByUserId(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public Collection<InfoBookingDto> findAllBookingsByOwnerId(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                                @RequestParam(defaultValue = "ALL") String state,
-                                                               @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
-                                                               Integer from,
-                                                               @Positive @RequestParam(name = "size", defaultValue = "10")
-                                                               Integer size) {
-
+                                                               @PositiveOrZero @RequestParam(name = "from",
+                                                                       defaultValue = "0") Integer from,
+                                                               @Positive @RequestParam(name = "size",
+                                                                       defaultValue = "10") Integer size) {
         return bookingService.findAllBookingsByOwnerId(userId, state, from, size);
     }
 }

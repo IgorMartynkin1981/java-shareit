@@ -78,7 +78,8 @@ public class BookingServiceImpl implements BookingService {
                 .map(BookingMapper::toInfoBookingDto).collect(Collectors.toList());
     }
 
-    private PageRequest createAndVerifyArgumentsForSetBookingsStatus(Long userId, String state, Integer from, Integer size) {
+    private PageRequest createAndVerifyArgumentsForSetBookingsStatus(Long userId, String state, Integer from,
+                                                                     Integer size) {
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("start").descending());
         findAndVerifyUser(userId);

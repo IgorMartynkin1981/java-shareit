@@ -28,7 +28,7 @@ public class ItemMapper {
     }
 
     public InfoItemDto toInfoItemDto(Item item) {
-        InfoItemDto infoItemDto = getInfoItemDto(item);
+        InfoItemDto infoItemDto = findInfoItemDto(item);
         Collection<Booking> bookingList = bookingRepository.findByItemId(infoItemDto.getId());
         infoItemDto.setLastBooking(InfoItemDto.toBookingDto(findLastBooking(bookingList)));
         infoItemDto.setNextBooking(InfoItemDto.toBookingDto(findNextBooking(bookingList)));
@@ -36,13 +36,13 @@ public class ItemMapper {
     }
 
     public InfoItemDto toInfoItemDtoNotOwner(Item item) {
-        InfoItemDto infoItemDto = getInfoItemDto(item);
+        InfoItemDto infoItemDto = findInfoItemDto(item);
         infoItemDto.setLastBooking(null);
         infoItemDto.setNextBooking(null);
         return infoItemDto;
     }
 
-    private static InfoItemDto getInfoItemDto(Item item) {
+    private static InfoItemDto findInfoItemDto(Item item) {
         findAllComments(item);
         Collection<InfoCommentDto> commentsList = item.getComments().stream().map(CommentMapper::toInfoCommentDto)
                 .collect(Collectors.toList());

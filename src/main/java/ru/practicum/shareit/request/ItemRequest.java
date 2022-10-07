@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-
 @Entity
 @Data
 @Table(name = "requests")
@@ -28,7 +27,6 @@ public class ItemRequest {
     private Collection<Item> items;
 
     public ItemRequest() {
-
     }
 
     public ItemRequest(Long userId, String description, LocalDateTime creationTime) {

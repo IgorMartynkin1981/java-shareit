@@ -13,11 +13,4 @@ public class InfoCommentDto {
     private Long itemId;
     private String authorName;
     private LocalDateTime created;
-
-    public InfoCommentDto(String text, Long itemId, String authorName, LocalDateTime created) {
-        this.text = text;
-        this.itemId = itemId;
-        this.authorName = authorName;
-        this.created = created;
-    }
 }
