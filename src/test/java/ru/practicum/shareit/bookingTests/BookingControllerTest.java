@@ -24,22 +24,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = BookingController.class)
-class BookingControllerTest {
+public class BookingControllerTest {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    BookingServiceImpl bookingService;
+    private BookingServiceImpl bookingService;
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @Test
     void createBooking() throws Exception {
         BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
         InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
-
         when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
-
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(bookingDto))
                         .header("X-Sharer-User-Id", "1")
@@ -48,7 +46,13 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(infoBookingDto)));
+    }
 
+    @Test
+    void createBookingIdNull() throws Exception {
+        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
+        InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
+        when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
         bookingDto.setItemId(null);
         mvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(bookingDto))
@@ -57,7 +61,13 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    void createBookingStartNull() throws Exception {
+        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
+        InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
+        when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
         bookingDto.setItemId(1L);
         bookingDto.setStart(null);
         mvc.perform(post("/bookings")
@@ -67,7 +77,13 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    void createBookingEndNull() throws Exception {
+        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
+        InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
+        when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
         bookingDto.setStart(LocalDateTime.of(2023, 10, 1, 12, 0));
         bookingDto.setEnd(null);
         mvc.perform(post("/bookings")
@@ -82,7 +98,6 @@ class BookingControllerTest {
     @Test
     void approveBooking() throws Exception {
         InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
-
         when(bookingService.approveBooking(any(), any(), any())).thenReturn(infoBookingDto);
         mvc.perform(patch("/bookings/{bookingId}", 1)
                         .header("X-Sharer-User-Id", "1")
@@ -97,7 +112,6 @@ class BookingControllerTest {
     @Test
     void getBookingById() throws Exception {
         InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
-
         when(bookingService.findBookingById(any(), any())).thenReturn(infoBookingDto);
         mvc.perform(get("/bookings/{bookingId}", 1)
                         .header("X-Sharer-User-Id", "1")
@@ -111,7 +125,6 @@ class BookingControllerTest {
     @Test
     void getBookingsByUserId() throws Exception {
         List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
-
         when(bookingService.findAllBookingsByUserId(any(), any(), any(), any())).thenReturn(bookings);
         mvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", "1")
@@ -123,7 +136,12 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(bookings)));
+    }
 
+    @Test
+    void getBookingsByUserIdSubZeroArgumentFrom() throws Exception {
+        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
+        when(bookingService.findAllBookingsByUserId(any(), any(), any(), any())).thenReturn(bookings);
         mvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", "1")
                         .param("state", "ALL")
@@ -133,7 +151,12 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
+    }
 
+    @Test
+    void getBookingsByUserIdSubZeroArgumentSize() throws Exception {
+        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
+        when(bookingService.findAllBookingsByUserId(any(), any(), any(), any())).thenReturn(bookings);
         mvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", "1")
                         .param("state", "ALL")
@@ -148,7 +171,6 @@ class BookingControllerTest {
     @Test
     void getBookingsByOwnerId() throws Exception {
         List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
-
         when(bookingService.findAllBookingsByOwnerId(any(), any(), any(), any())).thenReturn(bookings);
         mvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", "1")
@@ -160,7 +182,12 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(bookings)));
+    }
 
+    @Test
+    void getBookingsByOwnerIdSubZeroArgumentFrom() throws Exception {
+        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
+        when(bookingService.findAllBookingsByOwnerId(any(), any(), any(), any())).thenReturn(bookings);
         mvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", "1")
                         .param("state", "ALL")
@@ -170,7 +197,12 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
+    }
 
+    @Test
+    void getBookingsByOwnerIdSubZeroArgumentSize() throws Exception {
+        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
+        when(bookingService.findAllBookingsByOwnerId(any(), any(), any(), any())).thenReturn(bookings);
         mvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", "1")
                         .param("state", "ALL")

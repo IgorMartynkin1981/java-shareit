@@ -24,12 +24,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
 
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @Test
     void createUserTest() throws Exception {
@@ -44,7 +44,12 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName()), String.class));
+    }
 
+    @Test
+    void createUserTestSetIdSubZero() throws Exception {
+        UserDto userDto = ObjectsForTests.getUserDto1();
+        when(userService.createUser(any())).thenReturn(userDto);
         userDto.setId(-1L);
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDto))
@@ -52,6 +57,12 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createUserTestSetNameEmpty() throws Exception {
+        UserDto userDto = ObjectsForTests.getUserDto1();
+        when(userService.createUser(any())).thenReturn(userDto);
 
         userDto.setId(1L);
         userDto.setName("");
@@ -61,6 +72,12 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createUserTestSetFailMail() throws Exception {
+        UserDto userDto = ObjectsForTests.getUserDto1();
+        when(userService.createUser(any())).thenReturn(userDto);
 
         userDto.setName("user1");
         userDto.setEmail("user1mail.ru");

@@ -22,16 +22,19 @@ import static org.mockito.Mockito.when;
 
 class UserServiceImplTest {
 
-    UserServiceImpl userService;
-    UserRepository userRepository;
-    User user = ObjectsForTests.getUser1();
-    UserDto userDto = ObjectsForTests.getUserDto1();
-    UserDto userDtoError = ObjectsForTests.getUserDtoError();
+    private UserServiceImpl userService;
+    private UserRepository userRepository;
+    private User user;
+    private UserDto userDto;
+    private UserDto userDtoError;
 
     @BeforeEach
     void beforeEach() {
         userRepository = mock(UserRepository.class);
         userService = new UserServiceImpl(userRepository);
+        user = ObjectsForTests.getUser1();
+        userDto = ObjectsForTests.getUserDto1();
+        userDtoError = ObjectsForTests.getUserDtoError();
     }
 
     @Test
@@ -46,6 +49,10 @@ class UserServiceImplTest {
         when(userRepository.save(UserMapper.toUser(userDto)))
                 .thenReturn(user);
         Assertions.assertEquals(userDto, userService.createUser(userDto));
+    }
+
+    @Test
+    void updateUserTestDataNotFound() {
         when(userRepository.save(UserMapper.toUser(userDtoError)))
                 .thenThrow(new DataNotFound(String.format("User with id %d was not found in the database", 777)));
         DataNotFound exception = Assertions.assertThrows(
@@ -66,6 +73,10 @@ class UserServiceImplTest {
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(user));
         Assertions.assertEquals(userDto, userService.findUserById(1L));
+    }
+
+    @Test
+    void findUserByIdTestDataNotFound() {
         when(userRepository.findById(777L))
                 .thenThrow(new DataNotFound(String.format("User with id %d was not found in the database", 777)));
         DataNotFound exception = Assertions.assertThrows(

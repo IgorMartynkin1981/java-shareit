@@ -27,24 +27,24 @@ import static org.mockito.Mockito.when;
 
 class ItemServiceImplTest {
 
-    ItemRepository itemRepository;
-    UserRepository userRepository;
-    BookingRepository bookingRepository;
-    CommentRepository commentRepository;
-    ItemMapper mapper;
-    CommentMapper commentMapper;
-    ItemServiceImpl itemService;
+    private ItemRepository itemRepository;
+    private UserRepository userRepository;
+    private BookingRepository bookingRepository;
+    private CommentRepository commentRepository;
+    private ItemMapper mapper;
+    private CommentMapper commentMapper;
+    private ItemServiceImpl itemService;
 
-    User user1 = ObjectsForTests.getUser1();
-    UserDto userError = ObjectsForTests.getUserDtoError();
-    ItemDto itemDto1 = ObjectsForTests.getItemDto1();
-    Item item1 = ObjectsForTests.getItem1();
-    InfoItemDto infoItemDto1 = ObjectsForTests.getInfoItemDto1();
-    InfoItemDto infoItemDtoToOwner = ObjectsForTests.itemDtoToOwner();
-    Booking futureBooking = ObjectsForTests.futureBooking();
-    Booking pastBooking = ObjectsForTests.pastBooking();
-    Booking rejectedBooking = ObjectsForTests.rejectedBooking();
-    CommentDto commentDto = ObjectsForTests.commentDto();
+    private User user1;
+    private UserDto userError;
+    private ItemDto itemDto1;
+    private Item item1;
+    private InfoItemDto infoItemDto1;
+    private InfoItemDto infoItemDtoToOwner;
+    private Booking futureBooking;
+    private Booking pastBooking;
+    private Booking rejectedBooking;
+    private CommentDto commentDto;
 
 
     @BeforeEach
@@ -57,6 +57,17 @@ class ItemServiceImplTest {
         commentMapper = mock(CommentMapper.class);
         itemService = new ItemServiceImpl(itemRepository, mapper, userRepository, bookingRepository,
                 commentRepository, commentMapper);
+
+        user1 = ObjectsForTests.getUser1();
+        userError = ObjectsForTests.getUserDtoError();
+        itemDto1 = ObjectsForTests.getItemDto1();
+        item1 = ObjectsForTests.getItem1();
+        infoItemDto1 = ObjectsForTests.getInfoItemDto1();
+        infoItemDtoToOwner = ObjectsForTests.itemDtoToOwner();
+        futureBooking = ObjectsForTests.futureBooking();
+        pastBooking = ObjectsForTests.pastBooking();
+        rejectedBooking = ObjectsForTests.rejectedBooking();
+        commentDto = ObjectsForTests.commentDto();
     }
 
     @Test
@@ -111,7 +122,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void createComment() {
+    void createCommentErrorArgumentException() {
         userValidation();
         itemValidation();
         when(bookingRepository.findBookingsByBookerIdAndItemId(3L, 3L))
@@ -121,6 +132,12 @@ class ItemServiceImplTest {
                 () -> itemService.createComment(3L, 3L, commentDto));
         Assertions.assertEquals("Only the user who rented it can leave a comment on an item",
                 exception.getMessage());
+    }
+
+    @Test
+    void createComment() {
+        userValidation();
+        itemValidation();
 
         when(bookingRepository.findBookingsByBookerIdAndItemId(1L, 3L))
                 .thenReturn(new ArrayList<>(Arrays.asList(futureBooking, pastBooking, rejectedBooking)));

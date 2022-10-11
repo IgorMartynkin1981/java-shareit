@@ -23,9 +23,9 @@ import static org.mockito.Mockito.when;
 
 class ItemMapperTest {
 
-    UserRepository userRepository;
-    BookingRepository bookingRepository;
-    ItemMapper itemMapper;
+    private UserRepository userRepository;
+    private BookingRepository bookingRepository;
+    private ItemMapper itemMapper;
 
     @BeforeEach
     void beforeEach() {

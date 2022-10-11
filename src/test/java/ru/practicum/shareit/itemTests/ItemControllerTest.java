@@ -28,11 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ItemControllerTest {
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    ItemService itemService;
+    private ItemService itemService;
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @Test
     void createItemTests() throws Exception {
@@ -64,6 +64,13 @@ class ItemControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(infoItemDto)));
+    }
+
+    @Test
+    void updateItemTestsSetArgumentRequestIdSubZero() throws Exception {
+        ItemDto itemDto = ObjectsForTests.getItemDto1();
+        InfoItemDto infoItemDto = ObjectsForTests.getInfoItemDto1();
+        when(itemService.updateItem(any(), any(), any())).thenReturn(infoItemDto);
 
         itemDto.setRequestId(-1L);
         mvc.perform(patch("/items/{itemId}", 1)
