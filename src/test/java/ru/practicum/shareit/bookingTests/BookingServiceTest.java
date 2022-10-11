@@ -117,6 +117,7 @@ class BookingServiceTest {
         Assertions.assertEquals("Incorrect booking dates",
                 exception2.getMessage());
     }
+
     @Test
     void createBookingErrorArgumentExceptionIncorrectBookingDatesEndBeforeStart() {
         BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
@@ -136,35 +137,11 @@ class BookingServiceTest {
         item.setAvailable(true);
         bookingDto.setStart(LocalDateTime.of(2023, 10, 1, 12, 0));
         bookingDto.setEnd(LocalDateTime.of(2023, 10, 1, 11, 0));
-        ErrorArgumentException exception3 = Assertions.assertThrows(
+        ErrorArgumentException exception = Assertions.assertThrows(
                 ErrorArgumentException.class,
                 () -> bookingService.createBooking(bookingDto, 1L));
         Assertions.assertEquals("Incorrect booking dates",
-                exception3.getMessage());
-//
-//        bookingDto.setEnd(LocalDateTime.of(2023, 10, 2, 12, 0));
-//        ValidationDataException exception4 = Assertions.assertThrows(
-//                ValidationDataException.class,
-//                () -> bookingService.createBooking(bookingDto, 2L));
-//        Assertions.assertEquals("Владелец не может бранировать свою вещь",
-//                exception4.getMessage());
-//
-//        userValidation();
-//        DataNotFound exception5 = Assertions.assertThrows(
-//                DataNotFound.class,
-//                () -> bookingService.getBookingById(1L, 777L));
-//        Assertions.assertEquals("Пользователь с id 777 в базе данных не обнаружен",
-//                exception5.getMessage());
-//
-//        User booker = ObjectsForTests.getUser1();
-//        Booking booking = ObjectsForTests.futureBooking();
-//        when(mapper.toBooking(bookingDto, item, booker))
-//                .thenReturn(booking);
-//        when(bookingRepository.save(booking))
-//                .thenReturn(booking);
-//
-//        Assertions.assertEquals(bookingService.createBooking(bookingDto, 1L),
-//                ObjectsForTests.waitingFutureInfoBookingDto1());
+                exception.getMessage());
     }
 
     @Test
