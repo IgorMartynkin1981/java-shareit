@@ -4,7 +4,7 @@ import lombok.Data;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -25,7 +25,9 @@ public class Item {
     private User owner;
     @OneToMany
     @JoinColumn(name = "item_id")
-    private List<Comment> comments;
+    private Collection<Comment> comments;
+    @Column(name = "request_id")
+    private Long requestId;
 
     public Item(Long id, User owner, String name, String description, Boolean available) {
         this.id = id;
@@ -35,13 +37,31 @@ public class Item {
         this.available = available;
     }
 
-    public Item(User owner, String name, String description, Boolean available) {
+    public Item() {
+    }
+
+    public Item(User owner, String name, String description, Boolean available, Long requestId) {
         this.owner = owner;
         this.name = name;
         this.description = description;
         this.available = available;
+        this.requestId = requestId;
     }
 
-    public Item() {
+    public Item(Long id, User owner, String name, String description, Boolean available, Collection<Comment> comments) {
+        this.id = id;
+        this.owner = owner;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.comments = comments;
+    }
+
+    public Item(User owner, String name, String description, Boolean available, Collection<Comment> comments) {
+        this.owner = owner;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.comments = comments;
     }
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.enums.State;
@@ -44,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public InfoItemDto createItem(ItemDto itemDto, Long ownerId) {
-        findAndVerifyUser(ownerId);
+        verifyUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(mapper.toItem(itemDto, ownerId)));
     }
 
@@ -52,12 +53,12 @@ public class ItemServiceImpl implements ItemService {
         itemDto.setId(itemId);
         verifyOnNullDataException(ownerId);
         Item item = findAndVerifyItemInRepository(itemDto.getId());
-        findAndVerifyUser(ownerId);
+        verifyUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(updateItemFromRepository(itemDto, ownerId, item)));
     }
 
     public InfoItemDto findItemById(Long itemId, Long userId) {
-        findAndVerifyUser(userId);
+        verifyUser(userId);
         Item item = findAndVerifyItemInRepository(itemId);
         InfoItemDto infoItemDto;
         if (item.getOwner().getId().equals((userId))) {
@@ -68,29 +69,36 @@ public class ItemServiceImpl implements ItemService {
         return infoItemDto;
     }
 
-    public Collection<InfoItemDto> findAllItemsByOwnerId(Long ownerId) {
-        findAndVerifyUser(ownerId);
-        return itemRepository.findByOwnerId(ownerId).stream()
+    public Collection<InfoItemDto> findAllItemsByOwnerId(Long ownerId, Integer from, Integer size) {
+        PageRequest pageRequest = getPageRequest(from, size);
+        verifyUser(ownerId);
+        return itemRepository.findByOwnerId(ownerId, pageRequest).stream()
                 .map(mapper::toInfoItemDto)
                 .sorted(Comparator.comparing(InfoItemDto::getId))
                 .collect(Collectors.toList());
     }
 
-    public Collection<InfoItemDto> searchItemsByText(String text) {
+    public Collection<InfoItemDto> searchItemsByText(String text, Integer from, Integer size) {
+        PageRequest pageRequest = getPageRequest(from, size);
         if ("".equals(text)) {
             return new ArrayList<>();
         }
-        return itemRepository.findByNameContainsOrDescriptionContainsIgnoreCase(text, text)
+        return itemRepository.findByNameContainsOrDescriptionContainsIgnoreCase(text, text, pageRequest)
                 .stream().filter(Item::getAvailable)
                 .map(mapper::toInfoItemDto)
                 .collect(Collectors.toList());
     }
 
+    private static PageRequest getPageRequest(Integer from, Integer size) {
+        int page = from / size;
+        return PageRequest.of(page, size);
+    }
+
     public InfoCommentDto createComment(Long itemId, Long userId, CommentDto commentDto) {
         findAndVerifyItemInRepository(itemId);
-        findAndVerifyUser(userId);
+        verifyUser(userId);
         verifyCommentIsEmpty(commentDto);
-        Collection<Booking> bookingList = bookingRepository.findAllBookingsByBookerIdAndItemId(itemId, userId);
+        Collection<Booking> bookingList = bookingRepository.findBookingsByBookerIdAndItemId(itemId, userId);
         bookingList.removeIf((b) -> b.getState().equals(State.REJECTED));
         bookingList.removeIf((b) -> b.getEnd().isAfter(LocalDateTime.now()));
         verifyUserWhoRented(bookingList);
@@ -137,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
                 String.format("Items with id %d were not found in the database", itemId)));
     }
 
-    private void findAndVerifyUser(Long userId) {
+    private void verifyUser(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new DataNotFound(
                 String.format("User with id %d was not found in the database", userId)));
     }
