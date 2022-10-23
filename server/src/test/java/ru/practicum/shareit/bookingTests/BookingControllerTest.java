@@ -49,53 +49,6 @@ public class BookingControllerTest {
     }
 
     @Test
-    void createBookingIdNull() throws Exception {
-        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
-        InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
-        when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
-        bookingDto.setItemId(null);
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(bookingDto))
-                        .header("X-Sharer-User-Id", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void createBookingStartNull() throws Exception {
-        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
-        InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
-        when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
-        bookingDto.setItemId(1L);
-        bookingDto.setStart(null);
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(bookingDto))
-                        .header("X-Sharer-User-Id", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void createBookingEndNull() throws Exception {
-        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
-        InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
-        when(bookingService.createBooking(any(), any())).thenReturn(infoBookingDto);
-        bookingDto.setStart(LocalDateTime.of(2023, 10, 1, 12, 0));
-        bookingDto.setEnd(null);
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(bookingDto))
-                        .header("X-Sharer-User-Id", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void approveBooking() throws Exception {
         InfoBookingDto infoBookingDto = ObjectsForTests.futureInfoBookingDTO();
         when(bookingService.approveBooking(any(), any(), any())).thenReturn(infoBookingDto);
@@ -139,36 +92,6 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByUserIdSubZeroArgumentFrom() throws Exception {
-        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
-        when(bookingService.findAllBookingsByUserId(any(), any(), any(), any())).thenReturn(bookings);
-        mvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", "1")
-                        .param("state", "ALL")
-                        .param("from", "-1")
-                        .param("size", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    void getBookingsByUserIdSubZeroArgumentSize() throws Exception {
-        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
-        when(bookingService.findAllBookingsByUserId(any(), any(), any(), any())).thenReturn(bookings);
-        mvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", "1")
-                        .param("state", "ALL")
-                        .param("from", "1")
-                        .param("size", "-1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
     void getBookingsByOwnerId() throws Exception {
         List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
         when(bookingService.findAllBookingsByOwnerId(any(), any(), any(), any())).thenReturn(bookings);
@@ -182,35 +105,5 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(bookings)));
-    }
-
-    @Test
-    void getBookingsByOwnerIdSubZeroArgumentFrom() throws Exception {
-        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
-        when(bookingService.findAllBookingsByOwnerId(any(), any(), any(), any())).thenReturn(bookings);
-        mvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", "1")
-                        .param("state", "ALL")
-                        .param("from", "-1")
-                        .param("size", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    void getBookingsByOwnerIdSubZeroArgumentSize() throws Exception {
-        List<InfoBookingDto> bookings = List.of(ObjectsForTests.futureInfoBookingDTO());
-        when(bookingService.findAllBookingsByOwnerId(any(), any(), any(), any())).thenReturn(bookings);
-        mvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", "1")
-                        .param("state", "ALL")
-                        .param("from", "1")
-                        .param("size", "-1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
     }
 }

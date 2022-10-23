@@ -67,22 +67,6 @@ class ItemControllerTest {
     }
 
     @Test
-    void updateItemTestsSetArgumentRequestIdSubZero() throws Exception {
-        ItemDto itemDto = ObjectsForTests.getItemDto1();
-        InfoItemDto infoItemDto = ObjectsForTests.getInfoItemDto1();
-        when(itemService.updateItem(any(), any(), any())).thenReturn(infoItemDto);
-
-        itemDto.setRequestId(-1L);
-        mvc.perform(patch("/items/{itemId}", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .header("X-Sharer-User-Id", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void findItemByIdTest() throws Exception {
         ItemDto itemDto = ObjectsForTests.getItemDto1();
         InfoItemDto infoItemDto = ObjectsForTests.getInfoItemDto1();

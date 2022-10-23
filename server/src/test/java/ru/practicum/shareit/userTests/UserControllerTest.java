@@ -47,49 +47,6 @@ class UserControllerTest {
     }
 
     @Test
-    void createUserTestSetIdSubZero() throws Exception {
-        UserDto userDto = ObjectsForTests.getUserDto1();
-        when(userService.createUser(any())).thenReturn(userDto);
-        userDto.setId(-1L);
-        mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void createUserTestSetNameEmpty() throws Exception {
-        UserDto userDto = ObjectsForTests.getUserDto1();
-        when(userService.createUser(any())).thenReturn(userDto);
-
-        userDto.setId(1L);
-        userDto.setName("");
-        mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void createUserTestSetFailMail() throws Exception {
-        UserDto userDto = ObjectsForTests.getUserDto1();
-        when(userService.createUser(any())).thenReturn(userDto);
-
-        userDto.setName("user1");
-        userDto.setEmail("user1mail.ru");
-        mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void updateUserTest() throws Exception {
         UserDto userDto = ObjectsForTests.getUserDto1();
         when(userService.updateUser(any(), any())).thenReturn(userDto);

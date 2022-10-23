@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.practicum.shareit.ObjectsForTests;
-import ru.practicum.shareit.ShareItApp;
+import ru.practicum.shareit.ShareItServer;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.services.BookingServiceImpl;
@@ -21,7 +21,7 @@ import javax.transaction.Transactional;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@SpringJUnitConfig({ShareItApp.class, ItemServiceImpl.class, UserServiceImpl.class, BookingServiceImpl.class})
+@SpringJUnitConfig({ShareItServer.class, ItemServiceImpl.class, UserServiceImpl.class, BookingServiceImpl.class})
 public class BookingIT {
 
     private final EntityManager em;

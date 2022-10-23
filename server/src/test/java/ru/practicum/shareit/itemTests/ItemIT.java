@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.practicum.shareit.ObjectsForTests;
-import ru.practicum.shareit.ShareItApp;
+import ru.practicum.shareit.ShareItServer;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.services.ItemServiceImpl;
@@ -19,7 +19,7 @@ import javax.transaction.Transactional;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@SpringJUnitConfig({ShareItApp.class, ItemServiceImpl.class, UserServiceImpl.class})
+@SpringJUnitConfig({ShareItServer.class, ItemServiceImpl.class, UserServiceImpl.class})
 public class ItemIT {
 
     private final EntityManager em;
