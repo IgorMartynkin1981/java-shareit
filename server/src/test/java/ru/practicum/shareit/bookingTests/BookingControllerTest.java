@@ -14,7 +14,6 @@ import ru.practicum.shareit.booking.dto.InfoBookingDto;
 import ru.practicum.shareit.booking.services.BookingServiceImpl;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
