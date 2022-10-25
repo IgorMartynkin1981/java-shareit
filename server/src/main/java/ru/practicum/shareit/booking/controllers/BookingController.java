@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.InfoBookingDto;
 import ru.practicum.shareit.booking.services.BookingService;
-import ru.practicum.shareit.exception.Create;
 
 import java.util.Collection;
 
@@ -23,7 +22,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public InfoBookingDto createBooking(@Validated({Create.class}) @RequestBody BookingDto bookingDto,
+    public InfoBookingDto createBooking(@RequestBody BookingDto bookingDto,
                                         @RequestHeader("X-Sharer-User-Id") Long bookerId) {
         return bookingService.createBooking(bookingDto, bookerId);
     }

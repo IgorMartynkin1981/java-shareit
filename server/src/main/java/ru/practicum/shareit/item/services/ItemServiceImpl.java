@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.enums.State;
 import ru.practicum.shareit.booking.repositories.BookingRepository;
 import ru.practicum.shareit.exception.DataNotFound;
 import ru.practicum.shareit.exception.ErrorArgumentException;
-import ru.practicum.shareit.exception.NullDataException;
 import ru.practicum.shareit.exception.ValidationDataException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.*;
@@ -51,7 +50,6 @@ public class ItemServiceImpl implements ItemService {
 
     public InfoItemDto updateItem(Long itemId, ItemDto itemDto, Long ownerId) {
         itemDto.setId(itemId);
-        verifyOnNullDataException(ownerId);
         Item item = findAndVerifyItemInRepository(itemDto.getId());
         verifyUser(ownerId);
         return mapper.toInfoItemDto(itemRepository.save(updateItemFromRepository(itemDto, ownerId, item)));
@@ -97,7 +95,6 @@ public class ItemServiceImpl implements ItemService {
     public InfoCommentDto createComment(Long itemId, Long userId, CommentDto commentDto) {
         findAndVerifyItemInRepository(itemId);
         verifyUser(userId);
-        verifyCommentIsEmpty(commentDto);
         Collection<Booking> bookingList = bookingRepository.findBookingsByBookerIdAndItemId(itemId, userId);
         bookingList.removeIf((b) -> b.getState().equals(State.REJECTED));
         bookingList.removeIf((b) -> b.getEnd().isAfter(LocalDateTime.now()));
@@ -120,18 +117,6 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemDto.getAvailable());
         }
         return item;
-    }
-
-    private static void verifyOnNullDataException(Long ownerId) {
-        if (ownerId == null) {
-            throw new NullDataException("Item owner id missing in request");
-        }
-    }
-
-    private static void verifyCommentIsEmpty(CommentDto commentDto) {
-        if (commentDto.getText() == null || commentDto.getText().equals("")) {
-            throw new ErrorArgumentException("Comment cannot be empty");
-        }
     }
 
     private static void verifyUserWhoRented(Collection<Booking> bookingList) {

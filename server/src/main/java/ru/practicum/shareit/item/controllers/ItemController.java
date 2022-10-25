@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.Create;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.InfoCommentDto;
 import ru.practicum.shareit.item.dto.InfoItemDto;
@@ -23,7 +21,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public InfoItemDto createItem(@Validated({Create.class}) @RequestBody ItemDto itemDto,
+    public InfoItemDto createItem(@RequestBody ItemDto itemDto,
                                   @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return itemService.createItem(itemDto, ownerId);
     }
