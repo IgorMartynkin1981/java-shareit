@@ -8,7 +8,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.exception.ErrorArgumentException;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -48,6 +50,12 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> bookItem(long userId, BookItemRequestDto requestDto) {
+        LocalDateTime timeNow = LocalDateTime.now();
+        if (requestDto.getStart().isBefore(timeNow)
+                || requestDto.getEnd().isBefore(timeNow)
+                || requestDto.getEnd().isBefore(requestDto.getStart())) {
+            throw new ErrorArgumentException("Incorrect booking dates");
+        }
         return post("", userId, requestDto);
     }
 

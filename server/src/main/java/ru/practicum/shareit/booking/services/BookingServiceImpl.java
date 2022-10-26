@@ -142,8 +142,6 @@ public class BookingServiceImpl implements BookingService {
     private Item findAndVerifyBooking(BookingDto bookingDto, Long bookerId) {
         Item item = findAndVerifyItemInRepository(bookingDto);
         verifyAvailableItem(item);
-        LocalDateTime timeNow = LocalDateTime.now();
-        verifyCorrectBookingDates(bookingDto, timeNow);
         findAndVerifyUser(bookerId);
         verifyOwnerItem(bookerId, item);
         return item;
@@ -163,14 +161,6 @@ public class BookingServiceImpl implements BookingService {
     private static void verifyAvailableItem(Item item) {
         if (!item.getAvailable()) {
             throw new ErrorArgumentException("Booking of this item is not possible, item status is 'occupied'");
-        }
-    }
-
-    private static void verifyCorrectBookingDates(BookingDto bookingDto, LocalDateTime timeNow) {
-        if (bookingDto.getStart().isBefore(timeNow)
-                || bookingDto.getEnd().isBefore(timeNow)
-                || bookingDto.getEnd().isBefore(bookingDto.getStart())) {
-            throw new ErrorArgumentException("Incorrect booking dates");
         }
     }
 

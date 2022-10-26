@@ -25,6 +25,12 @@ public class GatewayErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public GatewayErrorResponse handleErrorArgumentException(final ErrorArgumentException e) {
+        return new GatewayErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public GatewayErrorResponse handleNullDataException(final NullDataException e) {
         StackTraceElement[] stack = e.getStackTrace();
         return new GatewayErrorResponse(e.getMessage());
