@@ -94,57 +94,6 @@ class BookingServiceTest {
     }
 
     @Test
-    void createBookingErrorArgumentExceptionIncorrectBookingDates() {
-        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
-        bookingDto.setItemId(777L);
-        Item item = ObjectsForTests.getItem3();
-        item.setAvailable(false);
-        when(itemRepository.findById(any()))
-                .thenAnswer(invocationOnMock -> {
-                    Long itemId = invocationOnMock.getArgument(0, Long.class);
-                    if (itemId == 777) {
-                        throw new DataNotFound("Item with id 777 was not found in the database");
-                    } else {
-                        return Optional.of(item);
-                    }
-                });
-        bookingDto.setItemId(3L);
-        item.setAvailable(true);
-        bookingDto.setStart(LocalDateTime.now().minus(Period.ofDays(1)));
-        ErrorArgumentException exception2 = Assertions.assertThrows(
-                ErrorArgumentException.class,
-                () -> bookingService.createBooking(bookingDto, 1L));
-        Assertions.assertEquals("Incorrect booking dates",
-                exception2.getMessage());
-    }
-
-    @Test
-    void createBookingErrorArgumentExceptionIncorrectBookingDatesEndBeforeStart() {
-        BookingDto bookingDto = ObjectsForTests.futureBookingDto1();
-        bookingDto.setItemId(777L);
-        Item item = ObjectsForTests.getItem3();
-        item.setAvailable(false);
-        when(itemRepository.findById(any()))
-                .thenAnswer(invocationOnMock -> {
-                    Long itemId = invocationOnMock.getArgument(0, Long.class);
-                    if (itemId == 777) {
-                        throw new DataNotFound("Item with id 777 was not found in the database");
-                    } else {
-                        return Optional.of(item);
-                    }
-                });
-        bookingDto.setItemId(3L);
-        item.setAvailable(true);
-        bookingDto.setStart(LocalDateTime.of(2023, 10, 1, 12, 0));
-        bookingDto.setEnd(LocalDateTime.of(2023, 10, 1, 11, 0));
-        ErrorArgumentException exception = Assertions.assertThrows(
-                ErrorArgumentException.class,
-                () -> bookingService.createBooking(bookingDto, 1L));
-        Assertions.assertEquals("Incorrect booking dates",
-                exception.getMessage());
-    }
-
-    @Test
     void approveBookingAPPROVED() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(ObjectsForTests.futureBooking()));
         Booking approvedBooking = ObjectsForTests.futureBooking();
